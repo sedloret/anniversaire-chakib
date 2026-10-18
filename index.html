@@ -168,7 +168,7 @@
       <h3 class="pix">TES ALLIES</h3>
       <ul class="tips">
         <li>💎 Les <b>Gemmes</b> font fuir les ennemis… et si tu réunis les 6, ça claque&nbsp;👌</li>
-        <li>👟 Les <b>baskets</b> déclenchent le mode marathon</li>
+        <li>🍖 Les <b>ribs</b> : dévore-les pour filer à toute vitesse</li>
         <li>❤️ 3 vies, et tes bougies restent acquises si tu tombes</li>
       </ul>
     </div>
@@ -222,7 +222,7 @@ const CONFIG = {
   title: "Joyeux anniversaire, Chakib ! 🎉",
   message: [
     "46 bougies, et toujours la même énergie : celle d'un <b>héros du quotidien</b>, toujours là pour les siens.",
-    "Je te souhaite une année pleine de santé, de joie et de belles aventures… et de belles pièces de viande, cuites à la perfection&nbsp;! 🥩",
+    "Je te souhaite une année pleine de santé, de joie et de belles aventures… et plein de ribs bien fondants&nbsp;! 🍖",
     "Longue vie à toi, beau-frère ! 🥳",
   ],
   from: "Mourad",
@@ -311,7 +311,8 @@ const Snd = {
   eat() { this.tone(180, .3, { slide: 5, vol: .06 }); },
   hit() { this.tone(500, .6, { slide: .2, type: 'sawtooth', vol: .06 }); },
   snap() { this.tone(1600, .05, { vol: .08 }); this.noise(.9, .25, 6000, 200); },
-  shoe() { [400, 600, 800, 1000, 1300].forEach((f, i) => this.tone(f, .08, { when: i * .04, vol: .05 })); },
+  munch() { [0, .16, .32].forEach(w => { this.tone(140, .09, { when: w, type: 'square', vol: .06, slide: .6 }); }); this.shoe(.5); },
+  shoe(d = 0) { [400, 600, 800, 1000, 1300].forEach((f, i) => this.tone(f, .08, { when: d + i * .04, vol: .05 })); },
   blow() { this.noise(1.1, .3, 1500, 150); },
   win() {
     [[523, 0], [659, .12], [784, .24], [1047, .36], [784, .5], [1047, .62]].forEach(([f, w]) => this.tone(f, .2, { when: w, type: 'square', vol: .06 }));
@@ -570,12 +571,13 @@ function spawnShoe() {
   if (!cells.length) return;
   const [x, y] = cells[Math.floor(Math.random() * cells.length)];
   G.shoe = { x, y, t: 12 };
-  toast('👟 Des baskets sont apparues quelque part !');
+  toast('🍖 Une assiette de ribs vient d’apparaître !');
 }
 
 function takeShoe() {
-  G.shoe = null; G.boost = 6; Snd.shoe(); buzz(30);
-  toast('👟 Mode marathon : vitesse x1,5 !');
+  G.shoe = null; G.boost = 6; Snd.munch(); buzz(30);
+  toast('🍖 Ribs dévorés : plein d’énergie, vitesse x1,5 !');
+  const p = posOf(player); float(p.x + .5, p.y + .1, 'Miam ! 😋', '#ffc83d');
 }
 
 function eatEnemy(e) {
@@ -661,7 +663,7 @@ function render() {
   }
   if (G.shoe && (G.shoe.t > 3 || Math.floor(tm * 6) % 2)) {
     ctx.font = `${t * .78}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('👟', (G.shoe.x + .5) * t, (G.shoe.y + .5) * t + Math.sin(tm * 5) * t * .06);
+    ctx.fillText('🍖', (G.shoe.x + .5) * t, (G.shoe.y + .5) * t + Math.sin(tm * 5) * t * .06);
   }
   for (const e of enemies) {
     if (e.state === 'gone') continue;
